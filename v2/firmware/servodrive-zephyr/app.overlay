@@ -1,0 +1,36 @@
+/*
+ * Device aliases the ServoDrive firmware expects. Default values target the
+ * nucleo_g431rb; adapt to the real board / a respun ServoDrive v2.
+ *
+ *   motor_a / motor_b : two PWM channels for the sign-magnitude H-bridge
+ *   pot_adc           : ADC channel reading the feedback potentiometer
+ *
+ * TODO: confirm timer channels, pins and ADC channel for the target board.
+ */
+/ {
+	aliases {
+		motor-a = &motor_a_pwm;
+		motor-b = &motor_b_pwm;
+		pot-adc = &pot_adc_ch;
+	};
+};
+
+/* Example PWM channels on TIM (adjust node/channel for the board). */
+&timers3 {
+	status = "okay";
+	motor_a_pwm: pwm {
+		status = "okay";
+	};
+};
+
+/* The ADC node + channel for the potentiometer (adjust for the board). */
+&adc1 {
+	status = "okay";
+	pot_adc_ch: channel@4 {
+		reg = <4>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+	};
+};
