@@ -1,20 +1,22 @@
 """Camera capture + face detection.
 
-v1 uses OpenCV's Haar cascade (fast, dependency-free). Swap for a DNN
-detector (res10 SSD) or MediaPipe later for robustness — see README.
+Capture is separated from detection: the detector is pluggable (see
+`detector.py`). The tracker only owns the camera and the 180-degree un-rotation
+of the robot's upside-down camera mount.
 """
 import cv2
 
+from detector import make_detector
+
 
 class FaceTracker:
-    def __init__(self, cam_index: int = 0, rotate_180: bool = True):
+    def __init__(self, cam_index: int = 0, rotate_180: bool = True,
+                 detector_kind: str = "haar"):
         self.cap = cv2.VideoCapture(cam_index, cv2.CAP_DSHOW)
         if not self.cap.isOpened():
             raise RuntimeError(f"Could not open camera index {cam_index}")
         self.rotate_180 = rotate_180
-        self.det = cv2.CascadeClassifier(
-            cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-        )
+        self.detector = make_detector(detector_kind)
 
     def read_upright(self):
         """Read a frame and undo the robot camera's 180-degree mounting."""
@@ -27,12 +29,7 @@ class FaceTracker:
 
     def biggest_face(self, frame):
         """Return (cx, cy, w, h) of the largest face, or None."""
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = self.det.detectMultiScale(gray, 1.2, 5, minSize=(60, 60))
-        if len(faces) == 0:
-            return None
-        x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
-        return (x + w / 2.0, y + h / 2.0, w, h)
+        return self.detector.detect(frame)
 
     def release(self):
         if self.cap.isOpened():
