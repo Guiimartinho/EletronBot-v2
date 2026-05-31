@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_ELECTRONBOT_F405
+
+config BOARD
+	default "electronbot_f405"
+
+endif # BOARD_ELECTRONBOT_F405

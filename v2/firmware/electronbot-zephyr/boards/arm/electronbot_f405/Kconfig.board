@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_ELECTRONBOT_F405
+	bool "ElectronBot F405 head board"
+	depends on SOC_STM32F405XG
