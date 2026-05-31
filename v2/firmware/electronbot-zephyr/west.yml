@@ -1,0 +1,25 @@
+# West manifest for the ElectronBot Zephyr head firmware.
+#
+# Usage (creates a workspace that pulls Zephyr + HAL modules next to this app):
+#   west init -l v2/firmware/electronbot-zephyr
+#   west update
+#   west build -b electronbot_f405 v2/firmware/electronbot-zephyr
+#
+# Pin to a known-good Zephyr release; bump deliberately.
+manifest:
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: v3.7.0
+      import:
+        # Only pull the modules this app needs (HALs/CMSIS) to keep it lean.
+        name-allowlist:
+          - cmsis
+          - hal_stm32
+
+  self:
+    path: application
