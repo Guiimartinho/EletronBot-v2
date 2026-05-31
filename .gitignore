@@ -1,0 +1,16 @@
+# Local scratch & tooling (not part of the project)
+/_*.txt
+/_*.py
+/_*.html
+/_docslist.txt
+/_edgeprofile*/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
